@@ -86,7 +86,7 @@ class Admin extends baseComponent {
 				return
             }
         })
-    }
+	}
 }
 
 export default new Admin()
