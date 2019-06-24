@@ -1,11 +1,11 @@
 'use strict';
 
-import GoodsModel from '../models/goods'
+import TagModel from '../models/goods_tag'
 import baseComponent from '../prototype/baseComponent'
 import formidable from 'formidable'
 
 
-class Goods extends baseComponent {
+class Tag extends baseComponent {
 	constructor() {
 		super()
 		this.save = this.save.bind(this)
@@ -20,14 +20,10 @@ class Goods extends baseComponent {
 				})
 				return
 			}
-			const { goodsName, goodsCatId, goodsImg, shopPrice } = fields;
+			const { tagName } = fields;
 			try {
-				if (!goodsName) {
-					throw new Error('商品名称不能为空')
-				} else if (!goodsCatId) {
-					throw new Error('请选择商品分类')
-				} else if (!goodsImg) {
-					throw new Error('商品图片不能为空')
+				if (!tagName) {
+					throw new Error('标签名称不能为空')
 				}
 			} catch (err) {
 				res.send({
@@ -37,18 +33,20 @@ class Goods extends baseComponent {
 				return
 			}
             try {
-                const check = await GoodsModel.findOne({ goodsName })
+                const check = await TagModel.findOne({ tagName })
                 if (check) {
 					res.send({
 						code: 0,
-						message: '手机号已经存在',
+						message: '标签名称已经存在',
                     })
                     return false
                 }
-                await GoodsModel.create(fields)
+                await TagModel.create({
+					tagName:tagName
+				})
                 res.send({
                     code: 1,
-                    message: '商品添加成功',
+                    message: '标签添加成功',
                 })
             } catch(err){
                 res.send({
@@ -59,7 +57,35 @@ class Goods extends baseComponent {
             }
 	
 		})
-    }
+	}
+	async del(req, res, next){
+		const form = new formidable.IncomingForm();
+		form.parse(req, async (err, fields, files) => {
+			if (err) {
+				res.send({
+					code: 0,
+					message: '表单信息错误'
+				})
+				return
+            }
+
+			try{
+				console.log(fields)
+                let data = await TagModel.remove({ _id: { $in: fields.delArr } })
+                res.send({
+                    code: 1,
+                    data: data,
+					message: '删除成功'
+				})
+            } catch(err){
+                res.send({
+					code: 0,
+					message: err.message
+				})
+				return
+            }
+        })
+	}
     async list (req, res, next){
         const form = new formidable.IncomingForm();
 		form.parse(req, async (err, fields, files) => {
@@ -72,7 +98,7 @@ class Goods extends baseComponent {
             }
 
             try{
-                let data = await GoodsModel.find()
+                let data = await TagModel.find()
                 res.send({
                     code: 0,
                     data: data,
@@ -89,4 +115,4 @@ class Goods extends baseComponent {
 	}
 }
 
-export default new Goods()
+export default new Tag()
