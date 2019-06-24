@@ -15,7 +15,7 @@ class Tag extends baseComponent {
 		form.parse(req, async (err, fields, files) => {
 			if (err) {
 				res.send({
-					code: 0,
+					status: false,
 					message: '表单信息错误'
 				})
 				return
@@ -27,7 +27,7 @@ class Tag extends baseComponent {
 				}
 			} catch (err) {
 				res.send({
-					code: 0,
+					status: false,
 					message: err.message,
 				})
 				return
@@ -36,7 +36,7 @@ class Tag extends baseComponent {
                 const check = await TagModel.findOne({ tagName })
                 if (check) {
 					res.send({
-						code: 0,
+						status: false,
 						message: '标签名称已经存在',
                     })
                     return false
@@ -45,12 +45,12 @@ class Tag extends baseComponent {
 					tagName:tagName
 				})
                 res.send({
-                    code: 1,
+					status: true,
                     message: '标签添加成功',
                 })
             } catch(err){
                 res.send({
-					code: 0,
+					status: false,
 					message: err.message,
 				})
 				return
@@ -63,23 +63,23 @@ class Tag extends baseComponent {
 		form.parse(req, async (err, fields, files) => {
 			if (err) {
 				res.send({
-					code: 0,
+					status: false,
 					message: '表单信息错误'
 				})
 				return
             }
 
 			try{
-				console.log(fields)
-                let data = await TagModel.remove({ _id: { $in: fields.delArr } })
+				console.log(fields.id)
+                let data = await TagModel.remove({ _id: { $in: fields.id.split(',') } })
                 res.send({
-                    code: 1,
-                    data: data,
+                    status: true,
+                    data: fields.id.split(','),
 					message: '删除成功'
 				})
             } catch(err){
                 res.send({
-					code: 0,
+					status: false,
 					message: err.message
 				})
 				return
@@ -91,7 +91,7 @@ class Tag extends baseComponent {
 		form.parse(req, async (err, fields, files) => {
 			if (err) {
 				res.send({
-					code: 0,
+					status: false,
 					message: '表单信息错误'
 				})
 				return
@@ -100,13 +100,13 @@ class Tag extends baseComponent {
             try{
                 let data = await TagModel.find()
                 res.send({
-                    code: 0,
+                    status: true,
                     data: data,
 					message: '获取列表成功'
 				})
             } catch(err){
                 res.send({
-					code: 0,
+					status: false,
 					message: err.message
 				})
 				return
