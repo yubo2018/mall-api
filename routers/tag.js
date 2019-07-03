@@ -1,6 +1,6 @@
     
 import express from 'express';
-import Tag from '../controller/TagController';
+import Tag from '../controller/GoodsTagController';
 const router = express.Router();
 
 router.post('/save', Tag.save )
