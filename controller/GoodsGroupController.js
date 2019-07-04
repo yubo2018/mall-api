@@ -1,6 +1,6 @@
 'use strict';
 
-import GoodsModel from '../models/goods'
+import GoodsGroupModel from '../models/goods_group'
 import baseComponent from '../prototype/baseComponent'
 import formidable from 'formidable'
 
@@ -15,44 +15,54 @@ class Goods extends baseComponent {
 		form.parse(req, async (err, fields, files) => {
 			if (err) {
 				res.send({
-					code: 0,
+					status: false,
 					message: '表单信息错误'
 				})
 				return
 			}
-			const { goodsName, goodsCatId, goodsImg, shopPrice } = fields;
+			const { specific, parentId, groupName, groupImg, isRecom } = fields;
 			try {
-				if (!goodsName) {
-					throw new Error('商品名称不能为空')
-				} else if (!goodsCatId) {
-					throw new Error('请选择商品分类')
-				} else if (!goodsImg) {
-					throw new Error('商品图片不能为空')
+				if (specific == 2 && !parentId) {
+					throw new Error('请选择二级分组')
+				} else if (!groupName) {
+					throw new Error('请输入分组名称')
 				}
 			} catch (err) {
 				res.send({
-					code: 0,
+					status: false,
 					message: err.message,
 				})
 				return
 			}
             try {
-                const check = await GoodsModel.findOne({ goodsName })
+                const check = await GoodsGroupModel.findOne({ groupName })
                 if (check) {
 					res.send({
-						code: 0,
-						message: '商品已经存在',
+						status: false,
+						message: '分组名称已经存在',
                     })
                     return false
-                }
-                await GoodsModel.create(fields)
+				}
+
+				if(parentId){
+					const checkgroupId = await GoodsGroupModel.findOne({ groupName })
+					if (!checkgroupId) {
+						res.send({
+							status: false,
+							message: '分组ID错误',
+						})
+						return false
+					}
+				}
+
+                await GoodsGroupModel.create(fields)
                 res.send({
-                    code: 1,
-                    message: '商品添加成功',
+                    status: true,
+                    message: '分组添加成功',
                 })
             } catch(err){
                 res.send({
-					code: 0,
+					status: false,
 					message: err.message,
 				})
 				return
@@ -65,22 +75,22 @@ class Goods extends baseComponent {
 		form.parse(req, async (err, fields, files) => {
 			if (err) {
 				res.send({
-					code: 0,
+					status: false,
 					message: '表单信息错误'
 				})
 				return
             }
 
             try{
-                let data = await GoodsModel.find()
+                let data = await GoodsGroupModel.find()
                 res.send({
-                    code: 0,
+                    status: false,
                     data: data,
 					message: '获取列表成功'
 				})
             } catch(err){
                 res.send({
-					code: 0,
+					status: false,
 					message: err.message
 				})
 				return
