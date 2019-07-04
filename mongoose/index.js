@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import config from '../config';
 import chalk from 'chalk';
 mongoose.Promise = global.Promise;
-mongoose.connect(config.url, { useCreateIndex: true,useNewUrlParser:true});
+mongoose.connect(config.url, { useCreateIndex: true,useNewUrlParser:true,useFindAndModify:false});
 
 const db = mongoose.connection;
 
