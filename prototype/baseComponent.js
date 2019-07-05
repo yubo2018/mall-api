@@ -3,7 +3,7 @@ import crypto from 'crypto'
 
 export default class BaseComponent {
 	constructor() {
-		this.idList = ['memberId', 'configId', 'goodsId', 'catId','tagId'];
+		this.idList = ['memberId', 'configId', 'goodsId', 'catId','tagId', 'groupId'];
 	}
 	//获取id列表
 	async getId(type) {
@@ -21,6 +21,12 @@ export default class BaseComponent {
 			console.log('获取ID数据失败');
 			throw new Error(err)
 		}
+	}
+	success(res, options ) {
+		res.send({ status: true, options})
+	}
+	error(res){
+		res.send({ status: false, options })
 	}
 	encryption(password) {
 		const newpassword = this.Md5(this.Md5(password).substr(2, 7) + this.Md5(password));

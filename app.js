@@ -19,6 +19,11 @@ app.all('*', function (req, res, next) {
 
 router(app);
 
+// 注册异常处理中间件
+app.use((err, req, res, next)=>{
+    res.fail(err.toString())
+});
+
 app.listen(config.port, () => {
 	console.log(
 		chalk.green(`成功监听端口：${config.port}`)

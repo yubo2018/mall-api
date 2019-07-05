@@ -9,4 +9,5 @@ router.post('/list', Goods.list )
 
 
 router.post('/group/save', Group.save )
+router.post('/group/list', Group.list )
 export default router

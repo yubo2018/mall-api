@@ -6,12 +6,15 @@ const Schema = mongoose.Schema;
 
 const groupSchema = new Schema({
     groupId: Number, //自增ID 
-    parentId: { type: Number, default: 0 }, //   父ID 
-    groupName: { type: String, default: '' }, //  分类名称 
-    isShow: { type: Number, default: '' }, // 是否显示  0:隐藏 1:显示 
-    sort: { type: Number, default: '' }, //  排序号 
-    dataFlag: { type: Number, default: '' }, //   删除标志  1:有效 -1：删除 
-    createTime: { type: String, default: '' }, // 建立时间 
+    parentId: { type: Number, default: null }, //   父ID
+    groupName: { type: String, default: '' }, //  分组名称 
+    groupImg: { type: String, default: '' }, //  分组图片 
+    sort: { type: Number, default: 0 }, //  排序号 
+    isShow: { type: Number, default: 1 }, // 是否显示  0:隐藏 1:显示 
+    isRecom: { type: Number, default: 1 }, // 是否热门推荐  0:关闭 1:开启 
+    createTime: { type: Date, default: Date.now() }, // 建立时间 
+}, {
+    versionKey: false
 })
 
 groupSchema.index({ id: 1 });
