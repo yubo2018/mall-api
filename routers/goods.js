@@ -7,6 +7,8 @@ const router = express.Router();
 router.post('/save', Goods.save )
 router.post('/list', Goods.list )
 
+router.post('/cats/save', Goods.catsSave )
+router.get('/cats/list', Goods.catsList )
 
 router.post('/group/save', Group.save )
 router.post('/group/list', Group.list )
