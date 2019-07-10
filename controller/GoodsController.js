@@ -1,6 +1,7 @@
 'use strict';
 
 import GoodsModel from '../models/goods'
+import GoodsCatsModel from '../models/goods_cats'
 import baseComponent from '../prototype/baseComponent'
 import formidable from 'formidable'
 
@@ -86,6 +87,23 @@ class Goods extends baseComponent {
 				return
             }
         })
+	}
+	async catsSave (req, res, next){
+		const form = new formidable.IncomingForm();
+		form.parse(req, async (err, fields, files) => {
+			const data = await GoodsCatsModel.create({
+				catName:'ce223',
+				parentId: "5d22f5edb7b3502ecc41e1ce"
+			})
+			res.send({actions:123,data})
+		})
+	}
+	async catsFind(req, res, next){
+		const form = new formidable.IncomingForm();
+		form.parse(req, async (err, fields, files) => {
+			const data = await GoodsCatsModel.find({},'-_id').populate('parentId')
+			res.send({actions:123,data})
+		})
 	}
 }
 
