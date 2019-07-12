@@ -3,7 +3,7 @@
 import formidable from 'formidable'
 import baseComponent from '../prototype/baseComponent'
 import GoodsModel from '../models/goods'
-import GoodsCateModel from '../models/goods_cats'
+import GoodsCatsModel from '../models/goods_cats'
 import GoodsGroupModel from '../models/goods_group'
 
 class Goods extends baseComponent {
@@ -99,11 +99,11 @@ class Goods extends baseComponent {
 				})
 				return
 			}
-			const { catId, groupId, catName, isShow, catSort } = fields
+			const { catId, groupId, catName, isShow, sort } = fields
 			try {
 				if (!groupId) {
 					throw new Error('分组ID不能为空')
-				}else if (!catName) {
+				} else if (!catName) {
 					throw new Error('分类名称不能为空')
 				}
 			} catch (err) {
@@ -115,7 +115,7 @@ class Goods extends baseComponent {
 			}
 
 			try {
-				let checkCatName = await GoodsCateModel.findOne({ catName });
+				let checkCatName = await GoodsCatsModel.findOne({ catName });
 				if (checkCatName) {
 					throw new Error('分类名称已存在')
 				}
@@ -125,17 +125,17 @@ class Goods extends baseComponent {
 				}
 				// 修改
 				if (catId) {
-					let checkCatId = await GoodsCateModel.findById(catId);
+					let checkCatId = await GoodsCatsModel.findById(catId);
 					if (!checkCatId) {
 						throw new Error('分类ID错误')
 					}
 					let updData = {
 						groupId: checkGroupId._id,
-						catName: catName? catName: checkCatId.catName,
+						catName: catName ? catName : checkCatId.catName,
 						isShow: isShow ? isShow : checkCatId.isShow,
-						catSort: catSort ? catSort : checkCatId.catSort
+						sort: sort ? sort : checkCatId.sort
 					}
-					let updOne = await GoodsCateModel.findByIdAndUpdate(catId, updData, { new: true })
+					let updOne = await GoodsCatsModel.findByIdAndUpdate(catId, updData, { new: true })
 					if (!updOne) {
 						throw new Error('修改失败，请检查分类ID是否正确')
 					}
@@ -146,11 +146,11 @@ class Goods extends baseComponent {
 					return
 				}
 				// 新增
-				await GoodsCateModel.create({
+				await GoodsCatsModel.create({
 					groupId: groupId,
 					catName: catName,
 					isShow: isShow,
-					catSort: catSort
+					sort: sort
 				})
 				res.send({
 					code: 0,
@@ -175,7 +175,7 @@ class Goods extends baseComponent {
 			]
 		}
 		try {
-			let data = await GoodsCateModel.find(filter, '-_id').sort({ catSort: -1 });
+			let data = await GoodsCatsModel.find(filter, '-_id').sort({ sort: -1 }).populate('groupId');
 			res.send({
 				code: 0,
 				data: data,
@@ -189,22 +189,82 @@ class Goods extends baseComponent {
 			return
 		}
 	}
-	async catsSave (req, res, next){
+	async groupSave(req, res, next) {
 		const form = new formidable.IncomingForm();
 		form.parse(req, async (err, fields, files) => {
-			const data = await GoodsCatsModel.create({
-				catName:'ce223',
-				parentId: "5d22f5edb7b3502ecc41e1ce"
-			})
-			res.send({actions:123,data})
+			if (err) {
+				res.send({
+					code: 0,
+					message: '表单信息错误'
+				})
+				return
+			}
+			const { groupId, groupName, isShow, isRecom, sort } = fields;
+			try {
+				if (!groupName) {
+					throw new Error('分组名称不能为空')
+				}
+			} catch (err) {
+				res.send({
+					code: 0,
+					message: err.message,
+				})
+				return
+			}
+			try {
+				// 修改
+				if (groupId) {
+					let checkGroupId = await GoodsGroupModel.findById(groupId);
+					if (!checkGroupId) {
+						throw new Error('分组ID错误')
+					}
+					if(groupName == checkGroupId.groupName){
+						throw new Error('分组名称已存在')
+					}
+					let updData = {
+						groupName: groupName ? groupName : checkGroupId.groupName,
+						isShow: isShow ? isShow : checkGroupId.isShow,
+						isRecom: isRecom ? isRecom : checkGroupId.isRecom,
+						sort: sort ? sort : checkGroupId.sort
+					}
+					let updOne = await GoodsGroupModel.findByIdAndUpdate(groupId, updData, { new: true })
+					if (!updOne) {
+						throw new Error('修改失败，请检查分组ID是否正确')
+					}
+					res.send({
+						code: 0,
+						message: '分组修改成功'
+					})
+					return
+				}
+
+				let checkGroupName = await GoodsGroupModel.findOne({ groupName });
+				if (checkGroupName) {
+					throw new Error('分组名称已存在')
+				}
+				// 新增
+				await GoodsGroupModel.create({
+					groupName: groupName,
+					isShow: isShow,
+					isRecom: isRecom,
+					sort: sort
+				})
+				res.send({
+					code: 0,
+					message: '分类添加成功'
+				})
+				return
+			} catch (err) {
+				res.send({
+					code: 0,
+					message: err.message,
+				})
+				return
+			}
 		})
 	}
-	async catsFind(req, res, next){
-		const form = new formidable.IncomingForm();
-		form.parse(req, async (err, fields, files) => {
-			const data = await GoodsCatsModel.find({},'-_id').populate('parentId')
-			res.send({actions:123,data})
-		})
+	async groupList(req, res, next) {
+
 	}
 }
 

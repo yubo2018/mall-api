@@ -8,18 +8,11 @@ import formidable from 'formidable'
 class Goods extends baseComponent {
 	constructor() {
 		super()
-		this.save = this.save.bind(this)
+		this.addGroup = this.addGroup.bind(this)
 	}
-	async save(req, res, next) {
+	async addGroup(req, res, next) {
 		const form = new formidable.IncomingForm();
 		form.parse(req, async (err, fields, files) => {
-			if (err) {
-				res.send({
-					status: false,
-					message: '表单信息错误'
-				})
-				return
-			}
 			const { parentId, groupName, groupImg, isRecom } = fields;
 			try {
 				if (!groupName) {
@@ -28,8 +21,10 @@ class Goods extends baseComponent {
 					throw new Error('分组图片不能为空')
 				}
 			} catch (err) {
-				res.send({ 
-					status: false, 
+				console.log('前台参数出错', err.message);
+				res.send({
+					status: 0,
+					type: 'ERROR_PARAMS',
 					message: err.message
 				})
 				return
