@@ -60,7 +60,7 @@ class Tag extends baseComponent {
 	async delTag(req, res, next) {
 		const form = new formidable.IncomingForm();
 		form.parse(req, async (err, fields, files) => {
-			const tagId = JSON.parse(fields.tagId)
+			const tagId = fields.tagId.split(',')
 			try {
 				if (!(tagId instanceof Array)) {
 					throw new Error('标签ID错误')
@@ -119,7 +119,7 @@ class Tag extends baseComponent {
 				res.send({
 					status: 1,
 					data: data,
-					type: 'ERROR_TO_GET_TAG',
+					type: 'SUCCESS_TO_GET_TAG',
 					message: '获取列表成功'
 				})
 			} catch (err) {
@@ -170,7 +170,7 @@ class Tag extends baseComponent {
 				res.send({
 					status: 1,
 					type: 'SUCCESS_UPDATE_RESTAURANT',
-					success: '修改标签信息成功'
+					message: '修改标签信息成功'
 				})
 				return
 			} catch (err) {

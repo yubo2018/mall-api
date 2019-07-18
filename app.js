@@ -16,6 +16,17 @@ app.all('*', function (req, res, next) {
     else next();
 });
 
+app.get('/wxml',function(req,res){
+    var fileName="./index.html";
+    res.sendfile(`${__dirname}/index.wxml`)
+    // fs.readFile(fileName,function(err,data){
+    //     if(err)
+    //         console.log("对不起，您所访问的路径出错");
+    //     else{
+    //         res.write(data);
+    //     }
+    // })
+})
 
 router(app);
 
