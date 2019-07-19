@@ -11,8 +11,11 @@ router.post('/list', Goods.list )
 router.post('/cats/save', Goods.catsSave )
 router.get('/cats/list', Goods.catsList )
 
-router.post('/add', Group.addGroup )
 
+router.post('/group/add', Group.addGroup)
+router.post('/group/del', Group.delGroup)
+router.get('/group/list', Group.getList)
+router.post('/group/update', Group.updateGroup)
 
 
 router.post('/tag/add', GoodsTag.addTag)

@@ -30,18 +30,25 @@ class Goods extends baseComponent {
 				return
 			}
 			try {
-				const check = await GoodsGroupModel.findOne({ groupName });
-				if (check) {
-					return res.send({ status: false, message: '分组名称已经存在' })
+				const exists = await GoodsGroupModel.findOne({ groupName });
+				if (exists) {
+					res.send({
+						status: false,
+						type: 'ERROR_GROUP_NAME',
+						message: '分组名称已经存在'
+					})
+					return
 				}
 				let checkGroupId = {};
 				if (parentId) {
 					checkGroupId = await GoodsGroupModel.findOne({ groupId: parentId })
 					if (!checkGroupId) {
-						return res.send({ 
+						res.send({
 							status: false,
+							type: 'ERROR_GROUPID',
 							message: '分组ID错误'
 						})
+						return
 					}
 				}
 				const newGroupId = await this.getId('groupId');
@@ -52,11 +59,11 @@ class Goods extends baseComponent {
 					groupImg,
 					isRecom
 				})
-				res.send({ 
+				res.send({
 					status: true,
 					message: '分组添加成功'
 				})
-				return 
+				return
 			} catch (err) {
 				res.send({
 					status: false,
@@ -67,7 +74,10 @@ class Goods extends baseComponent {
 
 		})
 	}
-	async list(req, res, next) {
+	async delGroup(req, res, next) {
+
+	}
+	async getList(req, res, next) {
 		const form = new formidable.IncomingForm();
 		form.parse(req, async (err, fields, files) => {
 			if (err) {
@@ -79,16 +89,16 @@ class Goods extends baseComponent {
 			}
 
 			try {
-				let filter ={}
-				let data = await GoodsGroupModel.find(filter, '-_id').sort({sort: -1});
+				let filter = {}
+				let data = await GoodsGroupModel.find(filter, '-_id').sort({ sort: -1 });
 
 				let group = data.filter(item => !item.parentId)
 				let subGroup = data.filter(item => item.parentId)
 				let newArr = []
-				subGroup.forEach(item =>{
-					data.find(item =>  item.parentId);
+				subGroup.forEach(item => {
+					data.find(item => item.parentId);
 				})
-	
+
 				res.send({
 					status: false,
 					data: subGroup,
@@ -102,6 +112,9 @@ class Goods extends baseComponent {
 				return
 			}
 		})
+	}
+	async updateGroup(req, res, next) {
+
 	}
 }
 
